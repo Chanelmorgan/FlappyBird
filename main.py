@@ -25,6 +25,26 @@ start_image = pygame.image.load("assets/start.png")
 
 # higher the number the faster the ground will be moving
 scroll_speed = 1
+bird_start_position = (100, 250)
+
+
+class Bird(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = bird_images[0]
+        self.rect = self.image.get_rect()
+        self.rect.center = bird_start_position
+        # Number that loops through the bird images
+        # to animate it
+        self.image_index = 0
+
+    def update(self):
+        # Animate Bird
+        self.image_index += 1
+        # When the image index gets to 30 reset
+        if self.image_index >= 30:
+            self.image_index = 0
+        self.image = bird_images[self.image_index // 10]
 
 
 class Ground(pygame.sprite.Sprite):
@@ -51,6 +71,10 @@ def quit_game():
 
 # Game Main Method
 def main():
+    # Instantiate Bird
+    bird = pygame.sprite.GroupSingle()
+    bird.add(Bird())
+
     # Instantiate Initial Ground
     x_pos_ground, y_pos_ground = 0, 520
     ground = pygame.sprite.Group()
@@ -69,15 +93,17 @@ def main():
 
         # Spawn Ground -
         # because the images move off the screen we need to generate new ones
-        if len(ground) <2:
+        if len(ground) <= 2:
             ground.add(Ground(win_width, y_pos_ground))
 
         # Draw - Pipes, Ground and Bird to start game
         ground.draw(window)
+        bird.draw(window)
 
         # Update - Pipes, Ground and Bird
         # Need to update the ground so its moves
         ground.update()
+        bird.update()
 
         # frames per second limited to 60
         clock.tick(60)
