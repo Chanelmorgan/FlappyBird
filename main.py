@@ -37,14 +37,30 @@ class Bird(pygame.sprite.Sprite):
         # Number that loops through the bird images
         # to animate it
         self.image_index = 0
+        self.vel = 0
+        # Prevents the player from spamming the space bar
+        self.flap = False
 
-    def update(self):
+    def update(self, user_input):
         # Animate Bird
         self.image_index += 1
         # When the image index gets to 30 reset
         if self.image_index >= 30:
             self.image_index = 0
         self.image = bird_images[self.image_index // 10]
+
+        # Gravity and Flap
+        self.vel += 0.5
+        if self.vel > 7:
+            self.vel = 7
+        if self.rect.y < 500:
+            self.rect.y += int(self.vel)
+        if self.vel == 0:
+            self.flap = False
+        # User input
+        if user_input[pygame.K_SPACE] and not self.flap and self.rect.y > 0:
+            self.flap = True
+            self.vel = -7
 
 
 class Ground(pygame.sprite.Sprite):
@@ -88,6 +104,9 @@ def main():
         # Reset the window
         window.fill((0, 0, 0))
 
+        # User input
+        user_input = pygame.key.get_pressed()
+
         # Draw background
         window.blit(skyline_image, (0, 0))
 
@@ -103,7 +122,7 @@ def main():
         # Update - Pipes, Ground and Bird
         # Need to update the ground so its moves
         ground.update()
-        bird.update()
+        bird.update(user_input)
 
         # frames per second limited to 60
         clock.tick(60)
