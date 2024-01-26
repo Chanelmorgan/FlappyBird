@@ -1,14 +1,17 @@
 import pygame
 from sys import exit
 import random
+import os
+import neat
+import time
 
 pygame.init()
 clock = pygame.time.Clock()
 
 # Window
-win_height = 720
-win_width = 551
-window = pygame.display.set_mode((win_width, win_height))
+WIN_HEIGHT = 720
+WIN_WIDTH = 551
+window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
 # Images
 bird_images = [pygame.image.load("assets/bird_down.png"),
@@ -78,7 +81,7 @@ class Pipe(pygame.sprite.Sprite):
     def update(self):
         # Move Pipe
         self.rect.x -= scroll_speed
-        if self.rect.x <= -win_width:
+        if self.rect.x <= -WIN_WIDTH:
             self.kill()
 
         # Score
@@ -103,7 +106,7 @@ class Ground(pygame.sprite.Sprite):
     def update(self):
         # Move Ground
         self.rect.x -= scroll_speed
-        if self.rect.x <= -win_width:
+        if self.rect.x <= -WIN_WIDTH:
             self.kill()
 
 
@@ -148,7 +151,7 @@ def main():
 
         # Spawn Ground
         if len(ground) <= 2:
-            ground.add(Ground(win_width, y_pos_ground))
+            ground.add(Ground(WIN_WIDTH, y_pos_ground))
 
         # Draw - Pipes, Ground and Bird
         pipes.draw(window)
@@ -171,8 +174,8 @@ def main():
         if collision_pipes or collision_ground:
             bird.sprite.alive = False
             if collision_ground:
-                window.blit(game_over_image, (win_width // 2 - game_over_image.get_width() // 2,
-                                              win_height // 2 - game_over_image.get_height() // 2))
+                window.blit(game_over_image, (WIN_WIDTH // 2 - game_over_image.get_width() // 2,
+                                              WIN_HEIGHT // 2 - game_over_image.get_height() // 2))
                 if user_input[pygame.K_r]:
                     score = 0
                     break
@@ -203,8 +206,8 @@ def menu():
         window.blit(skyline_image, (0, 0))
         window.blit(ground_image, Ground(0, 520))
         window.blit(bird_images[0], (100, 250))
-        window.blit(start_image, (win_width // 2 - start_image.get_width() // 2,
-                                  win_height // 2 - start_image.get_height() // 2))
+        window.blit(start_image, (WIN_WIDTH // 2 - start_image.get_width() // 2,
+                                  WIN_HEIGHT // 2 - start_image.get_height() // 2))
 
         # User Input
         user_input = pygame.key.get_pressed()
